@@ -1,0 +1,10 @@
+{
+  "id": "mysqlroot",
+  "mysqlroot": {
+    "encrypted_data": "lzH93YyrJDW7o4nkHf3gtX44jsA4x366M04FtyOWG4s=\n",
+    "hmac": "i3Ycg5nGKVwClXxawy3hz3yudHBSZzOIa0Yolj15Ths=\n",
+    "iv": "dh3wBxDEcPU44u/uO3n5LA==\n",
+    "version": 2,
+    "cipher": "aes-256-cbc"
+  }
+}

@@ -5,25 +5,100 @@ ChefSpec::Coverage.start! { add_filter 'openstack-container' }
 
 CENTOS_7 = {
   platform: 'centos',
-  version: '7.2.1511',
-}.freeze
-
-CENTOS_6 = {
-  platform: 'centos',
-  version: '6.8',
-}.freeze
-
-DEBIAN_8 = {
-  platform: 'debian',
-  version: '8.6',
+  version: '7.4.1708',
 }.freeze
 
 ALL_PLATFORMS = [
-  CENTOS_6,
   CENTOS_7,
-  DEBIAN_8,
 ].freeze
 
 RSpec.configure do |config|
   config.log_level = :fatal
+end
+
+shared_context 'identity_stubs' do
+  before do
+    allow_any_instance_of(Chef::Recipe).to receive(:rabbit_servers)
+      .and_return('rabbit_servers_value')
+    allow_any_instance_of(Chef::Recipe).to receive(:memcached_servers)
+      .and_return([])
+    allow_any_instance_of(Chef::Recipe).to receive(:get_password)
+      .with('db', anything)
+      .and_return('keystone_db_pass')
+    allow_any_instance_of(Chef::Recipe).to receive(:get_password)
+      .with('user', anything)
+      .and_return('')
+    allow_any_instance_of(Chef::Recipe).to receive(:get_password)
+      .with('user', 'openstack')
+      .and_return('openstack')
+    allow_any_instance_of(Chef::Recipe).to receive(:get_password)
+      .with('user', 'user1')
+      .and_return('secret1')
+    allow_any_instance_of(Chef::Recipe).to receive(:get_password)
+      .with('token', 'openstack_identity_bootstrap_token')
+      .and_return('bootstrap-token')
+    allow_any_instance_of(Chef::Recipe).to receive(:secret)
+      .with('keystone', 'fernet_key0')
+      .and_return('thisisfernetkey0')
+    allow_any_instance_of(Chef::Recipe).to receive(:secret)
+      .with('keystone', 'fernet_key1')
+      .and_return('thisisfernetkey1')
+    stub_command("[ ! -e /etc/httpd/conf/httpd.conf ] && [ -e /etc/redhat-release ] && [ $(/sbin/sestatus | \
+grep -c '^Current mode:.*enforcing') -eq 1 ]").and_return(true)
+    stub_command('/usr/sbin/httpd -t')
+    allow_any_instance_of(Chef::Recipe).to receive(:search_for)
+      .with('os-identity').and_return(
+        [{
+          'openstack' => {
+            'identity' => {
+              'admin_tenant_name' => 'admin',
+              'admin_user' => 'admin',
+            },
+          },
+        }]
+      )
+    allow_any_instance_of(Chef::Recipe).to receive(:get_password)
+      .with('user', 'admin')
+      .and_return('admin')
+    allow_any_instance_of(Chef::Recipe).to receive(:rabbit_transport_url)
+      .with('identity')
+      .and_return('rabbit://openstack:openstack@controller.example.org:5672')
+    stub_command("/opt/chef/embedded/bin/gem list -i -v '>= 0.2.0' fog-openstack")
+  end
+end
+
+shared_context 'container_stubs' do
+  before do
+    allow_any_instance_of(Chef::Recipe).to receive(:address_for)
+      .with('lo')
+      .and_return('127.0.1.1')
+    allow_any_instance_of(Chef::Recipe).to receive(:config_by_role)
+      .with('rabbitmq-server', 'queue')
+      .and_return(
+        'host' => 'rabbit-host', 'port' => 'rabbit-port'
+      )
+    allow_any_instance_of(Chef::Recipe).to receive(:rabbit_servers)
+      .and_return '1.1.1.1:5672,2.2.2.2:5672'
+    allow_any_instance_of(Chef::Recipe).to receive(:get_password)
+      .with('token', 'openstack_identity_bootstrap_token')
+      .and_return('bootstrap-token')
+    allow_any_instance_of(Chef::Recipe).to receive(:get_password)
+      .with('token', 'openstack_vmware_secret_name')
+      .and_return 'vmware_secret_name'
+    allow_any_instance_of(Chef::Recipe).to receive(:get_password)
+      .with('db', 'zun')
+      .and_return('db-pass')
+    allow_any_instance_of(Chef::Recipe).to receive(:get_password)
+      .with('service', 'openstack-container')
+      .and_return('zun-pass')
+    allow_any_instance_of(Chef::Recipe).to receive(:get_password)
+      .with('user', 'openstack')
+      .and_return('mq-pass')
+    allow_any_instance_of(Chef::Recipe).to receive(:get_password)
+      .with('user', 'admin')
+      .and_return('admin-pass')
+    allow_any_instance_of(Chef::Recipe).to receive(:rabbit_transport_url)
+      .with('container')
+      .and_return('rabbit://openstack:openstack@controller.example.org:5672')
+  end
 end
