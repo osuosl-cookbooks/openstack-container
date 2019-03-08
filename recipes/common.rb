@@ -22,6 +22,7 @@ end
 
 include_recipe 'build-essential'
 include_recipe 'git'
+# include_recipe 'openstack-common'
 
 python_runtime 'osc-zun' do
   version '2'
@@ -32,6 +33,15 @@ end
 python_virtualenv node['openstack']['container']['virtualenv'] do
   python 'osc-zun'
   system_site_packages true
+end
+
+python_package 'PyMySQL' do
+  virtualenv node['openstack']['container']['virtualenv']
+end
+
+python_package 'python-zunclient' do
+  python 'osc-zun'
+  version '0.4.1'
 end
 
 package node['openstack']['container']['packages']
@@ -69,7 +79,9 @@ node.default['openstack']['container']['conf'].tap do |conf|
   conf['api']['host'] = bind_service_address
   conf['api']['port'] = bind_service['port']
   conf['keystone_authtoken']['auth_url'] = auth_url
-  conf['service_credentials']['auth_url'] = auth_url
+  conf['keystone_authtoken']['www_authenticate_uri'] = auth_url
+  conf['keystone_auth']['auth_url'] = auth_url
+  conf['keystone_auth']['www_authenticate_uri'] = auth_url
 end
 
 zun_dir = ::File.join(Chef::Config[:file_cache_path], 'zun')

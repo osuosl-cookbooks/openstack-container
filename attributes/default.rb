@@ -1,15 +1,17 @@
 default['openstack']['container']['user'] = 'zun'
-default['openstack']['bind_service']['all']['container']['port'] = 9517
-default['openstack']['bind_service']['all']['container']['host'] = '127.0.0.1'
 default['openstack']['container']['group'] = 'zun'
 default['openstack']['container']['virtualenv'] = '/opt/osc-zun'
 default['openstack']['container']['release'] = 'stable/pike'
 default['openstack']['container']['packages'] = %w(libffi-devel openssl-devel)
 default['openstack']['container']['repository'] = 'https://git.openstack.org/openstack/zun.git'
+default['openstack']['bind_service']['all']['container']['port'] = 9517
+default['openstack']['bind_service']['all']['container']['host'] = '127.0.0.1'
+default['openstack']['bind_service']['all']['container-wsproxy']['port'] = 6784
+default['openstack']['bind_service']['all']['container-wsproxy']['host'] = '127.0.0.1'
 %w(public internal admin).each do |ep_type|
   default['openstack']['endpoints'][ep_type]['container']['host'] = '127.0.0.1'
   default['openstack']['endpoints'][ep_type]['container']['scheme'] = 'http'
-  default['openstack']['endpoints'][ep_type]['container']['path'] = '/v1/%(tenant_id)s'
+  default['openstack']['endpoints'][ep_type]['container']['path'] = '/v1'
   default['openstack']['endpoints'][ep_type]['container']['port'] = 9517
 end
 default['openstack']['container']['custom_template_banner'] = '
@@ -20,3 +22,29 @@ default['openstack']['container']['conf_dir'] = '/etc/zun'
 default['openstack']['container']['conf_file'] =
   ::File.join(node['openstack']['container']['conf_dir'], 'zun.conf')
 default['openstack']['container']['service_role'] = 'admin'
+default['openstack']['container']['misc_paste'] = nil
+default['openstack']['container']['zun-api_wsgi_file'] = "#{Chef::Config[:file_cache_path]}/zun/zun/api/app.wsgi"
+default['openstack']['container']['ssl']['enabled'] = false
+# specify server whether to enforce client certificate requirement
+default['openstack']['container']['ssl']['cert_required'] = false
+# SSL certificate, keyfile and CA certficate file locations
+default['openstack']['container']['ssl']['basedir'] = '/etc/zun/ssl'
+# Protocol for SSL (Apache)
+default['openstack']['container']['ssl']['protocol'] = 'All -SSLv2 -SSLv3'
+# Which ciphers to use with the SSL/TLS protocol (Apache)
+# Example: 'RSA:HIGH:MEDIUM:!LOW:!kEDH:!aNULL:!ADH:!eNULL:!EXP:!SSLv2:!SEED:!CAMELLIA:!PSK!RC4:!RC4-MD5:!RC4-SHA'
+default['openstack']['container']['ssl']['ciphers'] = nil
+# path of the cert file for SSL.
+default['openstack']['container']['ssl']['certfile'] =
+  "#{node['openstack']['container']['ssl']['basedir']}/certs/sslcert.pem"
+# path of the keyfile for SSL.
+default['openstack']['container']['ssl']['keyfile'] =
+  "#{node['openstack']['container']['ssl']['basedir']}/private/sslkey.pem"
+default['openstack']['container']['ssl']['chainfile'] = nil
+# path of the CA cert file for SSL.
+default['openstack']['container']['ssl']['ca_certs'] =
+  "#{node['openstack']['container']['ssl']['basedir']}/certs/sslca.pem"
+# path of the CA cert files for SSL (Apache)
+default['openstack']['container']['ssl']['ca_certs_path'] =
+  "#{node['openstack']['container']['ssl']['basedir']}/certs/"
+default['openstack']['container']['zun_service'] = 'httpd'

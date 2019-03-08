@@ -18,10 +18,18 @@ provisioner:
         gpgkey: http://epel.osuosl.org/RPM-GPG-KEY-EPEL-7
 
 suites:
+  - name: api
+    run_list:
+      - recipe[build-essential]
+      - recipe[openstack-common]
+      - recipe[openstack-common::client]
+      - recipe[openstack-identity::openrc]
+      - recipe[openstack-ops-database::server]
+      - recipe[openstack-ops-database::openstack-db]
+      - recipe[openstack-ops-messaging::rabbitmq-server]
+      - recipe[openstack-identity::server-apache]
+      - recipe[openstack-identity::registration]
+      - recipe[openstack-container::api]
   - name: common
     run_list:
-      #- recipe[build-essential]
-      #- recipe[openstack-ops-database::server]
-      #- recipe[openstack-ops-database::openstack-db]
-      #- recipe[openstack-ops-messaging::rabbitmq-server]
       - recipe[openstack-container::common]

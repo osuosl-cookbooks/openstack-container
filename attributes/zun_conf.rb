@@ -7,6 +7,7 @@ default['openstack']['container']['conf'].tap do |conf|
   conf['keystone_authtoken']['user_domain_name'] = 'Default'
   conf['keystone_authtoken']['project_domain_name'] = 'Default'
   conf['keystone_authtoken']['region_name'] = node['openstack']['region']
+  conf['keystone_authtoken']['service_token_roles_required'] = true
   # [keystone_auth] section
   conf['keystone_auth']['username'] = 'zun'
   conf['keystone_auth']['project_name'] = 'service'
