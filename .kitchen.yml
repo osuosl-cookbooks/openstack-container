@@ -49,3 +49,6 @@ suites:
       - recipe[openstack-identity::server-apache]
       - recipe[openstack-identity::registration]
       - recipe[openstack-container::identity_registration]
+  - name: wsproxy
+    run_list:
+      - recipe[openstack-container::wsproxy]

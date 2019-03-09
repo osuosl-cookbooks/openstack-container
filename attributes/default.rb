@@ -48,3 +48,15 @@ default['openstack']['container']['ssl']['ca_certs'] =
 default['openstack']['container']['ssl']['ca_certs_path'] =
   "#{node['openstack']['container']['ssl']['basedir']}/certs/"
 default['openstack']['container']['zun_service'] = 'httpd'
+default['openstack']['container']['wsproxy']['unit'] = {
+  'Unit' => {
+    'Description' => 'OpenStack Container Service Websocket Proxy',
+  },
+  'Service' => {
+    'ExecStart' => "#{node['openstack']['container']['virtualenv']}/bin/zun-wsproxy",
+    'User' => node['openstack']['container']['user'],
+  },
+  'Install' => {
+    'WantedBy' => 'multi-user.target',
+  },
+}
