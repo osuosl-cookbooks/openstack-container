@@ -1,5 +1,7 @@
 default['openstack']['container']['conf_secrets'] = {}
 default['openstack']['container']['conf'].tap do |conf|
+  # conf['DEFAULT']['debug'] = true
+  # conf['DEFAULT']['verbose'] = true
   # [keystone_authtoken] section
   conf['keystone_authtoken']['username'] = 'zun'
   conf['keystone_authtoken']['project_name'] = 'service'

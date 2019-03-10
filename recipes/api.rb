@@ -28,6 +28,7 @@ node.default['openstack']['container']['conf'].tap do |conf|
   conf['oslo_messaging_notifications']['driver'] = 'messaging'
 end
 
+include_recipe 'openstack-common::etcd'
 include_recipe 'openstack-container::common'
 
 template '/etc/zun/api-paste.ini' do

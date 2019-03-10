@@ -59,8 +59,12 @@ end
 
 db_user = node['openstack']['db']['container']['username']
 db_pass = get_password 'db', 'zun'
-bind_service = node['openstack']['bind_service']['all']['container']
-bind_service_address = bind_address bind_service
+container_service = node['openstack']['bind_service']['all']['container']
+container_service_address = bind_address container_service
+container_docker_service = node['openstack']['bind_service']['all']['container-docker']
+container_docker_service_address = bind_address container_docker_service
+container_etcd_service = node['openstack']['bind_service']['all']['container-etcd']
+container_etcd_service_address = bind_address container_etcd_service
 
 # define secrets that are needed in the zun.conf
 node.default['openstack']['container']['conf_secrets'].tap do |conf_secrets|
@@ -76,12 +80,16 @@ identity_endpoint = internal_endpoint 'identity'
 auth_url = auth_uri_transform identity_endpoint.to_s, node['openstack']['api']['auth']['version']
 
 node.default['openstack']['container']['conf'].tap do |conf|
-  conf['api']['host'] = bind_service_address
-  conf['api']['port'] = bind_service['port']
+  conf['api']['host'] = container_service_address
+  conf['api']['port'] = container_service['port']
   conf['keystone_authtoken']['auth_url'] = auth_url
   conf['keystone_authtoken']['www_authenticate_uri'] = auth_url
   conf['keystone_auth']['auth_url'] = auth_url
   conf['keystone_auth']['www_authenticate_uri'] = auth_url
+  conf['docker']['docker_remote_api_host'] = container_docker_service_address
+  conf['docker']['docker_remote_api_port'] = container_docker_service['port']
+  conf['etcd']['etcd_host'] = container_etcd_service_address
+  conf['etcd']['etcd_port'] = container_etcd_service['port']
 end
 
 zun_dir = ::File.join(Chef::Config[:file_cache_path], 'zun')

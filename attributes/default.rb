@@ -8,6 +8,10 @@ default['openstack']['bind_service']['all']['container']['port'] = 9517
 default['openstack']['bind_service']['all']['container']['host'] = '127.0.0.1'
 default['openstack']['bind_service']['all']['container-wsproxy']['port'] = 6784
 default['openstack']['bind_service']['all']['container-wsproxy']['host'] = '127.0.0.1'
+default['openstack']['bind_service']['all']['container-docker']['host'] = '127.0.0.1'
+default['openstack']['bind_service']['all']['container-docker']['port'] = '2375'
+default['openstack']['bind_service']['all']['container-etcd']['host'] = '127.0.0.1'
+default['openstack']['bind_service']['all']['container-etcd']['port'] = '2379'
 %w(public internal admin).each do |ep_type|
   default['openstack']['endpoints'][ep_type]['container']['host'] = '127.0.0.1'
   default['openstack']['endpoints'][ep_type]['container']['scheme'] = 'http'
@@ -54,6 +58,18 @@ default['openstack']['container']['wsproxy']['unit'] = {
   },
   'Service' => {
     'ExecStart' => "#{node['openstack']['container']['virtualenv']}/bin/zun-wsproxy",
+    'User' => node['openstack']['container']['user'],
+  },
+  'Install' => {
+    'WantedBy' => 'multi-user.target',
+  },
+}
+default['openstack']['container']['compute']['unit'] = {
+  'Unit' => {
+    'Description' => 'OpenStack Container Service Compute Agent',
+  },
+  'Service' => {
+    'ExecStart' => "#{node['openstack']['container']['virtualenv']}/bin/zun-compute",
     'User' => node['openstack']['container']['user'],
   },
   'Install' => {
