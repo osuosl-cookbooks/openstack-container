@@ -1,0 +1,10 @@
+{
+  "id": "openstack-network",
+  "openstack-network": {
+    "encrypted_data": "S+in1i6MDkmmyyYypTPUZRyw6Yr7uYPajT+tOfz9tzUthdAZZOm4vEmCYR0w\nMCB+\n",
+    "hmac": "oPcT+N6bBVnT4MxsRxHl2akpdVC5LGh1nVQJBtcQgmo=\n",
+    "iv": "rVMvSW42Vwki/ciCtdwUcw==\n",
+    "version": 2,
+    "cipher": "aes-256-cbc"
+  }
+}

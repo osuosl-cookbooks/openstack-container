@@ -1,0 +1,10 @@
+{
+  "id": "glance",
+  "glance": {
+    "encrypted_data": "78V7qRgC+2m7nDWwWK+txTqtbVY7xuJIAMSMAcUGHuM=\n",
+    "hmac": "Wthv9Nv8G/FGfGqVC3ad25tADDyCyh3UvO89k9zB/5o=\n",
+    "iv": "QfyOUCU0CnXW9+v/OFkFKA==\n",
+    "version": 2,
+    "cipher": "aes-256-cbc"
+  }
+}

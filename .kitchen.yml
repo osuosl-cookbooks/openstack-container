@@ -12,6 +12,50 @@ provisioner:
       forbid_remote_root: false
       secret:
         key_path: /tmp/kitchen/encrypted_data_bag_secret
+      network:
+        conf:
+          DEFAULT:
+            service_plugins: neutron.services.l3_router.l3_router_plugin.L3RouterPlugin
+            allow_overlapping_ips: True
+            router_distributed: False
+        plugins:
+          ml2:
+            conf:
+              ml2:
+                type_drivers: flat,vlan,vxlan
+                extension_drivers: port_security
+                tenant_network_types: vxlan
+                mechanism_drivers: linuxbridge,l2population
+              ml2_type_flat:
+                flat_networks: '*'
+              ml2_type_vlan:
+                network_vlan_ranges: ''
+              ml2_type_gre:
+                tunnel_id_ranges: 32769:34000
+              ml2_type_vxlan:
+                vni_ranges: 1:1000
+          linuxbridge:
+            conf:
+              linux_bridge:
+                physical_interface_mappings: public:eth1
+              vxlan:
+                enable_vxlan: true
+                l2_population: true
+                local_ip: 127.0.0.1
+              vlans:
+                tenant_network_type: gre,vxlan
+                network_vlan_ranges: ''
+              agent:
+                polling_interval: 2
+      network_l3:
+        conf:
+          DEFAULT:
+            interface_driver: neutron.agent.linux.interface.BridgeInterfaceDriver
+            external_network_bridge: ''
+      network_dhcp:
+        conf:
+          DEFAULT:
+            interface_driver: neutron.agent.linux.interface.BridgeInterfaceDriver
     yum:
       epel:
         baseurl: http://epel.osuosl.org/7/$basearch
@@ -39,6 +83,7 @@ suites:
       - recipe[openstack-container::common]
   - name: compute
     run_list:
+      - recipe[container_test]
       - recipe[build-essential]
       - recipe[openstack-common]
       - recipe[openstack-common::client]
@@ -48,6 +93,19 @@ suites:
       - recipe[openstack-ops-messaging::rabbitmq-server]
       - recipe[openstack-identity::server-apache]
       - recipe[openstack-identity::registration]
+      - recipe[openstack-image::api]
+      - recipe[openstack-image::registry]
+      - recipe[openstack-image::identity_registration]
+      - recipe[openstack-network]
+      - recipe[openstack-network::identity_registration]
+      - recipe[openstack-network::ml2_core_plugin]
+      - recipe[openstack-network::ml2_linuxbridge]
+      - recipe[openstack-network::plugin_config]
+      - recipe[openstack-network::server]
+      - recipe[openstack-network::l3_agent]
+      - recipe[openstack-network::dhcp_agent]
+      - recipe[openstack-network::metadata_agent]
+      - recipe[openstack-network::metering_agent]
       - recipe[openstack-container::api]
       - recipe[openstack-container::identity_registration]
       - recipe[openstack-container::compute]
