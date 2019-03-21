@@ -51,6 +51,7 @@ service_tenant_name = node['openstack']['container']['conf']['keystone_authtoken
 service_name = 'zun'
 service_type = 'container'
 region = node['openstack']['region']
+kuryr_pass = get_password 'service', 'openstack-container-network'
 
 # Register telemetry_service Service
 openstack_service service_name do
@@ -80,6 +81,16 @@ openstack_user service_user do
   role_name service_role
   project_name service_tenant_name
   password service_pass
+  connection_params connection_params
+  action [:create, :grant_role]
+end
+
+# Register kuryr user
+openstack_user node['openstack']['container-network']['user'] do
+  domain_name service_domain_name
+  role_name node['openstack']['container-network']['service_role']
+  project_name 'service'
+  password kuryr_pass
   connection_params connection_params
   action [:create, :grant_role]
 end
