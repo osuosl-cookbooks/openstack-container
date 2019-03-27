@@ -22,12 +22,11 @@ end
 
 include_recipe 'build-essential'
 include_recipe 'git'
-# include_recipe 'openstack-common'
 
 python_runtime 'osc-zun' do
   version '2'
   provider :system
-  pip_version '9.0.3'
+  pip_version node['openstack']['container']['pip_version']
 end
 
 python_virtualenv node['openstack']['container']['virtualenv'] do
@@ -41,7 +40,7 @@ end
 
 python_package 'python-zunclient' do
   python 'osc-zun'
-  version '0.4.1'
+  version node['openstack']['container']['zunclient_version']
 end
 
 package node['openstack']['container']['packages']
@@ -68,12 +67,9 @@ container_etcd_service_address = bind_address container_etcd_service
 
 # define secrets that are needed in the zun.conf
 node.default['openstack']['container']['conf_secrets'].tap do |conf_secrets|
-  conf_secrets['database']['connection'] =
-    db_uri('container', db_user, db_pass)
-  conf_secrets['keystone_auth']['password'] =
-    get_password 'service', 'openstack-container'
-  conf_secrets['keystone_authtoken']['password'] =
-    get_password 'service', 'openstack-container'
+  conf_secrets['database']['connection'] = db_uri('container', db_user, db_pass)
+  conf_secrets['keystone_auth']['password'] = get_password 'service', 'openstack-container'
+  conf_secrets['keystone_authtoken']['password'] = get_password 'service', 'openstack-container'
 end
 
 identity_endpoint = internal_endpoint 'identity'

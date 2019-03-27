@@ -15,6 +15,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 class ::Chef::Recipe
   include ::Openstack
 end
@@ -66,6 +67,7 @@ include_recipe 'apache2::mod_ssl' if node['openstack']['identity']['ssl']['enabl
 
 # create the zun-api apache directory
 zun_apache_dir = "#{node['apache']['docroot_dir']}/zun"
+
 directory zun_apache_dir do
   owner 'root'
   group 'root'

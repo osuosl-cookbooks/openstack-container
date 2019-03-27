@@ -22,8 +22,7 @@ default['openstack']['container-network']['custom_template_banner'] = '
 # Any changes will be overwritten
 '
 default['openstack']['container-network']['conf_dir'] = '/etc/kuryr'
-default['openstack']['container-network']['conf_file'] =
-  ::File.join(node['openstack']['container-network']['conf_dir'], 'kuryr.conf')
+default['openstack']['container-network']['conf_file'] = ::File.join(node['openstack']['container-network']['conf_dir'], 'kuryr.conf')
 default['openstack']['container-network']['service_role'] = 'admin'
 default['openstack']['container-network']['misc_paste'] = nil
 default['openstack']['container-network']['kuryr_service'] = 'httpd'

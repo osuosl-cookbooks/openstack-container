@@ -26,7 +26,7 @@ include_recipe 'git'
 python_runtime 'osc-kuryr' do
   version '2'
   provider :system
-  pip_version '9.0.3'
+  pip_version node['openstack']['container']['pip_version']
 end
 
 python_virtualenv node['openstack']['container-network']['virtualenv'] do
@@ -36,7 +36,7 @@ end
 
 python_package 'setuptools' do
   virtualenv node['openstack']['container-network']['virtualenv']
-  version '40.8.0'
+  version node['openstack']['container']['setuptools_version']
 end
 
 # define secrets that are needed in the kuryr.conf

@@ -32,12 +32,7 @@ git zun_ui_dir do
   notifies :run, 'python_execute[zun-ui install]', :immediately
 end
 
-%w(
-  _1330_project_container_panelgroup.py
-  _1331_project_container_containers_panel.py
-  _2330_admin_container_panelgroup.py
-  _2331_admin_container_images_panel.py
-).each do |f|
+node['openstack']['container-ui']['files'].each do |f|
   remote_file "/usr/share/openstack-dashboard/openstack_dashboard/local/enabled/#{f}" do
     source "file://#{zun_ui_dir}/zun_ui/enabled/#{f}"
     notifies :restart, 'service[apache2]'

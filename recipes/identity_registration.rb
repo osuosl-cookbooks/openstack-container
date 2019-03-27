@@ -30,6 +30,7 @@ admin_pass = get_password 'user', node['openstack']['identity']['admin_user']
 admin_project = node['openstack']['identity']['admin_project']
 admin_domain = node['openstack']['identity']['admin_domain_name']
 service_domain_name = node['openstack']['container']['conf']['keystone_authtoken']['user_domain_name']
+
 connection_params = {
   openstack_auth_url:     "#{auth_url}/auth/tokens",
   openstack_username:     admin_user,
