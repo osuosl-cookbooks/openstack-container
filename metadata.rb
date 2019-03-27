@@ -13,6 +13,7 @@ supports         'centos', '~> 7.0'
 
 depends 'apache2'
 depends 'openstack-common'
+depends 'openstack-dashboard'
 depends 'openstack-identity'
 depends 'openstackclient'
 depends 'build-essential'
