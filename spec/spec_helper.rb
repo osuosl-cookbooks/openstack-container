@@ -6,6 +6,7 @@ ChefSpec::Coverage.start! { add_filter 'openstack-container' }
 CENTOS_7 = {
   platform: 'centos',
   version: '7.4.1708',
+  file_cache_path: '/var/chef/cache',
 }.freeze
 
 ALL_PLATFORMS = [

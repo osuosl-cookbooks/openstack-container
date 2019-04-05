@@ -62,7 +62,8 @@ end
 
 interfaces.each do |interface, res|
   # Register telemetry_service Endpoints
-  openstack_endpoint service_type do
+  openstack_endpoint "#{service_type}-#{interface}" do
+    endpoint_name service_type
     service_name service_name
     interface interface.to_s
     url res[:url].to_s
