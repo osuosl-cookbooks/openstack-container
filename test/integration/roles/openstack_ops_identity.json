@@ -1,0 +1,17 @@
+{
+    "chef_type": "role",
+    "default_attributes": {},
+    "description": "OpenStack Identity Operations Role",
+    "env_run_lists": {},
+    "json_class": "Chef::Role",
+    "name": "openstack_ops_identity",
+    "override_attributes": {},
+    "run_list": [
+      "role[openstack]",
+      "recipe[openstack-ops-database::server]",
+      "recipe[openstack-ops-database::openstack-db]",
+      "recipe[openstack-ops-messaging::rabbitmq-server]",
+      "recipe[openstack-identity::server-apache]",
+      "recipe[openstack-identity::registration]"
+    ]
+}

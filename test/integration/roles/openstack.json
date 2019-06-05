@@ -1,0 +1,99 @@
+{
+    "chef_type": "role",
+    "default_attributes": {
+      "rabbitmq": {
+        "use_distro_version": true
+      },
+      "openstack": {
+        "forbid_remote_root": false,
+        "network": {
+          "plugins": {
+            "ml2": {
+              "conf": {
+                "ml2": {
+                  "type_drivers": "flat,vlan,vxlan",
+                  "tenant_network_types": "vxlan",
+                  "extension_drivers": "port_security",
+                  "mechanism_drivers": "linuxbridge,l2population"
+                },
+                "ml2_type_flat": {
+                  "flat_networks": "*"
+                },
+                "ml2_type_vlan": {
+                  "network_vlan_ranges": ""
+                },
+                "ml2_type_gre": {
+                  "tunnel_id_ranges": "32769:34000"
+                },
+                "ml2_type_vxlan": {
+                  "vni_ranges": "1:1000"
+                }
+              }
+            },
+            "linuxbridge": {
+              "conf": {
+                "linux_bridge": {
+                  "physical_interface_mappings": "public:eth1"
+                },
+                "vlans": {
+                  "network_vlan_ranges": "",
+                  "tenant_network_type": "gre,vxlan"
+                },
+                "agent": {
+                  "polling_interval": 2
+                },
+                "vxlan": {
+                  "enable_vxlan": true,
+                  "local_ip": "127.0.0.1",
+                  "l2_population": true
+                }
+              }
+            }
+          },
+          "conf": {
+            "DEFAULT": {
+              "service_plugins": "neutron.services.l3_router.l3_router_plugin.L3RouterPlugin",
+              "allow_overlapping_ips": true,
+              "router_distributed": false
+            }
+          }
+        },
+        "server_root_password": "rootpass",
+        "secret": {
+          "key_path": "/tmp/kitchen/encrypted_data_bag_secret"
+        },
+        "network_dhcp": {
+          "conf": {
+            "DEFAULT": {
+              "interface_driver": "neutron.agent.linux.interface.BridgeInterfaceDriver"
+            }
+          }
+        },
+        "dashboard": {
+          "use_ssl": false,
+          "ssl": {
+            "use_data_bag": false
+          }
+        },
+        "network_l3": {
+          "conf": {
+            "DEFAULT": {
+              "external_network_bridge": "",
+              "interface_driver": "neutron.agent.linux.interface.BridgeInterfaceDriver"
+            }
+          }
+        }
+      }
+    },
+    "description": "OpenStack Role",
+    "env_run_lists": {},
+    "json_class": "Chef::Role",
+    "name": "openstack",
+    "override_attributes": {},
+    "run_list": [
+      "recipe[build-essential]",
+      "recipe[openstack-common]",
+      "recipe[openstack-common::client]",
+      "recipe[openstack-identity::openrc]"
+    ]
+}
