@@ -20,23 +20,14 @@ class ::Chef::Recipe
   include ::Openstack
 end
 
+include_recipe 'openstack-common'
 include_recipe 'build-essential'
 include_recipe 'git'
 
-python_runtime 'osc-kuryr' do
-  version '2'
-  provider :system
-  pip_version node['openstack']['container']['pip_version']
-end
+venv = node['openstack']['container-network']['virtualenv']
 
-python_virtualenv node['openstack']['container-network']['virtualenv'] do
-  python 'osc-kuryr'
-  system_site_packages true
-end
-
-python_package 'setuptools' do
-  virtualenv node['openstack']['container-network']['virtualenv']
-  version node['openstack']['container']['setuptools_version']
+execute "virtualenv #{venv}" do
+  creates venv
 end
 
 # define secrets that are needed in the kuryr.conf
@@ -45,7 +36,7 @@ node.default['openstack']['container-network']['conf_secrets'].tap do |conf_secr
 end
 
 identity_endpoint = internal_endpoint 'identity'
-auth_url = auth_uri_transform identity_endpoint.to_s, node['openstack']['api']['auth']['version']
+auth_url = ::URI.decode identity_endpoint.to_s
 
 node.default['openstack']['container-network']['conf'].tap do |conf|
   conf['neutron']['auth_url'] = auth_url
@@ -66,16 +57,14 @@ user node['openstack']['container-network']['user'] do
   gid node['openstack']['container-network']['group']
 end
 
-python_execute 'kuryr deps' do
-  virtualenv node['openstack']['container-network']['virtualenv']
-  command '-m pip install -I -r requirements.txt'
+execute 'kuryr deps' do
+  command "#{venv}/bin/pip install -I -r requirements.txt"
   cwd ::File.join(kuryr_dir)
   action :nothing
 end
 
-python_execute 'kuryr install' do
-  virtualenv node['openstack']['container-network']['virtualenv']
-  command 'setup.py install'
+execute 'kuryr install' do
+  command "#{venv}/bin/python setup.py install"
   cwd ::File.join(kuryr_dir)
   action :nothing
 end
@@ -83,9 +72,8 @@ end
 git kuryr_dir do
   revision node['openstack']['container-network']['release']
   repository node['openstack']['container-network']['repository']
-  notifies :run, 'python_execute[kuryr deps]', :immediately
-  notifies :install, 'python_package[setuptools]', :immediately
-  notifies :run, 'python_execute[kuryr install]', :immediately
+  notifies :run, 'execute[kuryr deps]', :immediately
+  notifies :run, 'execute[kuryr install]', :immediately
 end
 
 %w(/etc/kuryr /var/lib/kuryr).each do |d|

@@ -2,7 +2,7 @@ source 'https://supermarket.chef.io'
 
 solver :ruby, :required
 
-cookbook 'openstack-common', github: 'osuosl-cookbooks/cookbook-openstack-common', branch: 'stable/pike-zun'
+cookbook 'openstack-common', github: 'osuosl-cookbooks/cookbook-openstack-common', branch: 'master-zun'
 cookbook 'container_test', path: 'test/cookbooks/container_test'
 
 # Openstack deps
@@ -16,7 +16,7 @@ cookbook 'container_test', path: 'test/cookbooks/container_test'
 ).each do |cb|
   cookbook "openstack-#{cb}",
            github: "openstack/cookbook-openstack-#{cb}",
-           branch: 'stable/pike'
+           branch: 'master'
 end
 
 cookbook 'apache2', '< 6.0.0'

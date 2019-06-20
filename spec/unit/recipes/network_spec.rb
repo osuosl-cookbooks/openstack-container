@@ -10,31 +10,15 @@ describe 'openstack-container::network' do
       it 'converges successfully' do
         expect { chef_run }.to_not raise_error
       end
-      %w(build-essential git).each do |r|
+      %w(openstack-common build-essential git).each do |r|
         it do
           expect(chef_run).to include_recipe(r)
         end
       end
       it do
-        expect(chef_run).to install_python_runtime('osc-kuryr')
+        expect(chef_run).to run_execute('virtualenv /opt/osc-kuryr')
           .with(
-            version: '2',
-            provider: PoisePython::PythonProviders::System,
-            pip_version: '9.0.3'
-          )
-      end
-      it do
-        expect(chef_run).to create_python_virtualenv('/opt/osc-kuryr')
-          .with(
-            python: '/usr/bin/python',
-            system_site_packages: true
-          )
-      end
-      it do
-        expect(chef_run).to install_python_package('setuptools')
-          .with(
-            # virtualenv: '/opt/osc-kuryr',
-            version: '40.8.0'
+            creates: '/opt/osc-kuryr'
           )
       end
       it do
@@ -51,38 +35,32 @@ describe 'openstack-container::network' do
           )
       end
       it do
-        expect(chef_run).to nothing_python_execute('kuryr deps')
+        expect(chef_run).to nothing_execute('kuryr deps')
           .with(
-            # virtualenv: '/opt/osc-kuryr',
-            command: '-m pip install -I -r requirements.txt',
+            command: '/opt/osc-kuryr/bin/pip install -I -r requirements.txt',
             cwd: '/var/chef/cache/kuryr-libnetwork'
           )
       end
       it do
-        expect(chef_run).to nothing_python_execute('kuryr install')
+        expect(chef_run).to nothing_execute('kuryr install')
           .with(
-            # virtualenv: '/opt/osc-kuryr',
-            command: 'setup.py install',
+            command: '/opt/osc-kuryr/bin/python setup.py install',
             cwd: '/var/chef/cache/kuryr-libnetwork'
           )
       end
       it do
         expect(chef_run).to sync_git('/var/chef/cache/kuryr-libnetwork')
           .with(
-            revision: '1.0.0',
+            revision: 'stable/rocky',
             repository: 'https://git.openstack.org/openstack/kuryr-libnetwork.git'
           )
       end
       it do
-        expect(chef_run.git('/var/chef/cache/kuryr-libnetwork')).to notify('python_execute[kuryr deps]')
+        expect(chef_run.git('/var/chef/cache/kuryr-libnetwork')).to notify('execute[kuryr deps]')
           .to(:run).immediately
       end
       it do
-        expect(chef_run.git('/var/chef/cache/kuryr-libnetwork')).to notify('python_package[setuptools]')
-          .to(:install).immediately
-      end
-      it do
-        expect(chef_run.git('/var/chef/cache/kuryr-libnetwork')).to notify('python_execute[kuryr install]')
+        expect(chef_run.git('/var/chef/cache/kuryr-libnetwork')).to notify('execute[kuryr install]')
           .to(:run).immediately
       end
       %w(/etc/kuryr /var/lib/kuryr).each do |d|

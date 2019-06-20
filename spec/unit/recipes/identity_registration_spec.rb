@@ -49,17 +49,6 @@ describe 'openstack-container::identity_registration' do
           )
       end
       it do
-        expect(chef_run).to create_openstack_endpoint('container-admin')
-          .with(
-            endpoint_name: 'container',
-            service_name: 'zun',
-            interface: 'admin',
-            url: 'http://127.0.0.1:9517/v1',
-            region: 'RegionOne',
-            connection_params: connection
-          )
-      end
-      it do
         expect(chef_run).to create_openstack_project('service').with(connection_params: connection)
       end
       it do

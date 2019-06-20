@@ -15,13 +15,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+include_recipe 'openstack-common'
 include_recipe 'openstack-dashboard::horizon'
 
 zun_ui_dir = ::File.join(Chef::Config[:file_cache_path], 'zun-ui')
 
-python_execute 'zun-ui install' do
-  python '/usr/bin/python'
-  command '-m pip install .'
+execute 'zun-ui install' do
+  command '/usr/bin/pip install .'
   cwd ::File.join(zun_ui_dir)
   action :nothing
 end
@@ -29,7 +29,7 @@ end
 git zun_ui_dir do
   revision node['openstack']['container-ui']['release']
   repository node['openstack']['container-ui']['repository']
-  notifies :run, 'python_execute[zun-ui install]', :immediately
+  notifies :run, 'execute[zun-ui install]', :immediately
 end
 
 node['openstack']['container-ui']['files'].each do |f|

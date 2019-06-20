@@ -1,14 +1,31 @@
 default['openstack']['container']['user'] = 'zun'
 default['openstack']['container']['group'] = 'zun'
 default['openstack']['container']['virtualenv'] = '/opt/osc-zun'
-default['openstack']['container']['release'] = 'stable/pike'
-default['openstack']['container']['packages'] = %w(libffi-devel openssl-devel)
+default['openstack']['container']['release'] = 'stable/rocky'
+default['openstack']['container']['packages'] =
+  %w(
+    libffi-devel
+    openssl-devel
+    pciutils
+  )
 default['openstack']['container']['repository'] = 'https://git.openstack.org/openstack/zun.git'
-default['openstack']['container']['pip_version'] = '9.0.3'
-default['openstack']['container']['zunclient_version'] = '0.4.1'
-default['openstack']['container']['setuptools_version'] = '40.8.0'
+default['openstack']['container']['zunclient_version'] = '3.3.0'
+default['openstack']['container']['zunclient_packages'] =
+  %w(
+    python2-docker
+    python2-keystoneauth1
+    python2-openstackclient
+    python2-osc-lib
+    python2-oslo-i18n
+    python2-oslo-log
+    python2-oslo-utils
+    python2-pbr
+    python2-pyyaml
+    python-prettytable
+    python-websocket-client
+  )
 
-default['openstack']['container-ui']['release'] = 'stable/pike'
+default['openstack']['container-ui']['release'] = 'stable/rocky'
 default['openstack']['container-ui']['packages'] = []
 default['openstack']['container-ui']['repository'] = 'https://git.openstack.org/openstack/zun-ui.git'
 default['openstack']['container-ui']['files'] =
@@ -81,6 +98,7 @@ default['openstack']['container']['compute']['unit'] = {
     'Description' => 'OpenStack Container Service Compute Agent',
   },
   'Service' => {
+    'Environment' => 'PATH=/opt/osc-zun/bin:/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin',
     'ExecStart' => "#{node['openstack']['container']['virtualenv']}/bin/zun-compute",
     'User' => node['openstack']['container']['user'],
   },

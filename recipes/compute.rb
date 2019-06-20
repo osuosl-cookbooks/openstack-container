@@ -21,6 +21,7 @@ class ::Chef::Recipe
 end
 
 include_recipe 'openstack-container::common'
+include_recipe 'sudo'
 
 zun_user = node['openstack']['container']['user']
 zun_group = node['openstack']['container']['group']
@@ -45,10 +46,14 @@ cookbook_file '/etc/zun/rootwrap.d/zun.filters' do
   mode '0640'
 end
 
-file '/etc/sudoers.d/zun-rootwrap' do
-  content "#{zun_user} ALL=(root) NOPASSWD: #{node['openstack']['container']['virtualenv']}/bin/zun-rootwrap " \
-          "/etc/zun/rootwrap.conf *\n"
-  mode '0400'
+sudo 'zun' do
+  commands ["#{node['openstack']['container']['virtualenv']}/bin/zun-rootwrap /etc/zun/rootwrap.conf *"]
+  users [zun_user]
+  nopasswd true
+  defaults [
+    'secure_path=/opt/osc-zun/bin:/sbin:/bin:/usr/sbin:/usr/bin',
+    '!requiretty',
+  ]
 end
 
 docker_service 'zun' do

@@ -12,27 +12,28 @@ describe 'openstack-container::dashboard' do
       it 'converges successfully' do
         expect { chef_run }.to_not raise_error
       end
-      it do
-        expect(chef_run).to include_recipe('openstack-dashboard::horizon')
+      %w(openstack-common openstack-dashboard::horizon).each do |r|
+        it do
+          expect(chef_run).to include_recipe(r)
+        end
       end
       it do
-        expect(chef_run).to nothing_python_execute('zun-ui install')
+        expect(chef_run).to nothing_execute('zun-ui install')
           .with(
-            python: '/usr/bin/python',
-            command: '-m pip install .',
+            command: '/usr/bin/pip install .',
             cwd: '/var/chef/cache/zun-ui'
           )
       end
       it do
         expect(chef_run).to sync_git('/var/chef/cache/zun-ui')
           .with(
-            revision: 'stable/pike',
+            revision: 'stable/rocky',
             repository: 'https://git.openstack.org/openstack/zun-ui.git'
           )
       end
       it do
         expect(chef_run.git('/var/chef/cache/zun-ui')).to \
-          notify('python_execute[zun-ui install]').to(:run).immediately
+          notify('execute[zun-ui install]').to(:run).immediately
       end
       dash_dir = '/usr/share/openstack-dashboard/openstack_dashboard/local/enabled'
       %w(

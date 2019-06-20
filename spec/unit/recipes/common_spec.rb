@@ -11,38 +11,41 @@ describe 'openstack-container::common' do
       it 'converges successfully' do
         expect { chef_run }.to_not raise_error
       end
-      %w(build-essential git).each do |r|
+      %w(openstack-common build-essential git).each do |r|
         it do
           expect(chef_run).to include_recipe(r)
         end
       end
       it do
-        expect(chef_run).to install_python_runtime('osc-zun')
-          .with(
-            version: '2',
-            provider: PoisePython::PythonProviders::System,
-            pip_version: '9.0.3'
-          )
+        expect(chef_run).to run_execute('virtualenv /opt/osc-zun').with(creates: '/opt/osc-zun')
       end
       it do
-        expect(chef_run).to create_python_virtualenv('/opt/osc-zun')
-          .with(
-            python: '/usr/bin/python',
-            system_site_packages: true
-          )
+        expect(chef_run).to run_execute('/opt/osc-zun/bin/pip install PyMySQL')
+          .with(creates: '/opt/osc-zun/lib/python2.7/site-packages/pymysql')
+      end
+      zunclient_pkgs =
+        %w(
+          python2-docker
+          python2-keystoneauth1
+          python2-openstackclient
+          python2-osc-lib
+          python2-oslo-i18n
+          python2-oslo-log
+          python2-oslo-utils
+          python2-pbr
+          python2-pyyaml
+          python-prettytable
+          python-websocket-client
+        )
+      it do
+        expect(chef_run).to install_package(zunclient_pkgs)
       end
       it do
-        expect(chef_run).to install_python_package('PyMySQL')
+        expect(chef_run).to run_execute('/usr/bin/pip install python-zunclient==3.3.0')
+          .with(creates: '/usr/lib/python2.7/site-packages/zunclient')
       end
       it do
-        expect(chef_run).to install_python_package('python-zunclient')
-          .with(
-            python: '/usr/bin/python',
-            version: '0.4.1'
-          )
-      end
-      it do
-        expect(chef_run).to install_package(%w(libffi-devel openssl-devel))
+        expect(chef_run).to install_package(%w(libffi-devel openssl-devel pciutils))
       end
       it do
         expect(chef_run).to upgrade_package('MySQL-python')
@@ -61,31 +64,31 @@ describe 'openstack-container::common' do
           )
       end
       it do
-        expect(chef_run).to nothing_python_execute('zun deps')
+        expect(chef_run).to nothing_execute('zun deps')
           .with(
-            command: '-m pip install -I -r requirements.txt',
+            command: '/opt/osc-zun/bin/pip install -I -r requirements.txt',
             cwd: '/var/chef/cache/zun'
           )
       end
       it do
-        expect(chef_run).to nothing_python_execute('zun install')
+        expect(chef_run).to nothing_execute('zun install')
           .with(
-            command: 'setup.py install',
+            command: '/opt/osc-zun/bin/python setup.py install',
             cwd: '/var/chef/cache/zun'
           )
       end
       it do
         expect(chef_run).to sync_git('/var/chef/cache/zun')
           .with(
-            revision: 'stable/pike',
+            revision: 'stable/rocky',
             repository: 'https://git.openstack.org/openstack/zun.git'
           )
       end
       it do
-        expect(chef_run.git('/var/chef/cache/zun')).to notify('python_execute[zun deps]').to(:run).immediately
+        expect(chef_run.git('/var/chef/cache/zun')).to notify('execute[zun deps]').to(:run).immediately
       end
       it do
-        expect(chef_run.git('/var/chef/cache/zun')).to notify('python_execute[zun install]').to(:run).immediately
+        expect(chef_run.git('/var/chef/cache/zun')).to notify('execute[zun install]').to(:run).immediately
       end
       %w(/etc/zun /var/lib/zun/tmp).each do |d|
         it do

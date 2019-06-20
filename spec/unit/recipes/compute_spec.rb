@@ -11,8 +11,10 @@ describe 'openstack-container::compute' do
       it 'converges successfully' do
         expect { chef_run }.to_not raise_error
       end
-      it do
-        expect(chef_run).to include_recipe('openstack-container::common')
+      %w(openstack-container::common sudo).each do |r|
+        it do
+          expect(chef_run).to include_recipe(r)
+        end
       end
       it do
         expect(chef_run).to create_cookbook_file('/etc/zun/rootwrap.conf')
@@ -37,10 +39,15 @@ describe 'openstack-container::compute' do
           )
       end
       it do
-        expect(chef_run).to create_file('/etc/sudoers.d/zun-rootwrap')
+        expect(chef_run).to create_sudo('zun')
           .with(
-            content: "zun ALL=(root) NOPASSWD: /opt/osc-zun/bin/zun-rootwrap /etc/zun/rootwrap.conf *\n",
-            mode: '0400'
+            commands: ['/opt/osc-zun/bin/zun-rootwrap /etc/zun/rootwrap.conf *'],
+            users: %w(zun),
+            nopasswd: true,
+            defaults: [
+              'secure_path=/opt/osc-zun/bin:/sbin:/bin:/usr/sbin:/usr/bin',
+              '!requiretty',
+            ]
           )
       end
       it do
@@ -65,6 +72,7 @@ describe 'openstack-container::compute' do
                 'WantedBy' => 'multi-user.target',
               },
               'Service' => {
+                'Environment' => 'PATH=/opt/osc-zun/bin:/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin',
                 'ExecStart' => '/opt/osc-zun/bin/zun-compute',
                 'User' => 'zun',
               },

@@ -24,7 +24,7 @@ end
 
 identity_endpoint = public_endpoint 'identity'
 
-auth_url = auth_uri_transform identity_endpoint.to_s, node['openstack']['api']['auth']['version']
+auth_url = ::URI.decode identity_endpoint.to_s
 admin_user = node['openstack']['identity']['admin_user']
 admin_pass = get_password 'user', node['openstack']['identity']['admin_user']
 admin_project = node['openstack']['identity']['admin_project']
@@ -42,7 +42,6 @@ connection_params = {
 interfaces = {
   public: { url: public_endpoint('container') },
   internal: { url: internal_endpoint('container') },
-  admin: { url: admin_endpoint('container') },
 }
 
 service_pass = get_password 'service', 'openstack-container'

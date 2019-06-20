@@ -20,27 +20,25 @@ class ::Chef::Recipe
   include ::Openstack
 end
 
+include_recipe 'openstack-common'
 include_recipe 'build-essential'
 include_recipe 'git'
 
-python_runtime 'osc-zun' do
-  version '2'
-  provider :system
-  pip_version node['openstack']['container']['pip_version']
+venv = node['openstack']['container']['virtualenv']
+
+execute "virtualenv #{venv}" do
+  creates venv
 end
 
-python_virtualenv node['openstack']['container']['virtualenv'] do
-  python 'osc-zun'
-  system_site_packages true
+execute "#{venv}/bin/pip install PyMySQL" do
+  creates "#{venv}/lib/python2.7/site-packages/pymysql"
 end
 
-python_package 'PyMySQL' do
-  virtualenv node['openstack']['container']['virtualenv']
-end
+package node['openstack']['container']['zunclient_packages']
 
-python_package 'python-zunclient' do
-  python 'osc-zun'
-  version node['openstack']['container']['zunclient_version']
+execute 'install python-zunclient' do
+  command "/usr/bin/pip install python-zunclient==#{node['openstack']['container']['zunclient_version']}"
+  creates '/usr/lib/python2.7/site-packages/zunclient'
 end
 
 package node['openstack']['container']['packages']
@@ -73,7 +71,7 @@ node.default['openstack']['container']['conf_secrets'].tap do |conf_secrets|
 end
 
 identity_endpoint = internal_endpoint 'identity'
-auth_url = auth_uri_transform identity_endpoint.to_s, node['openstack']['api']['auth']['version']
+auth_url = ::URI.decode identity_endpoint.to_s
 
 node.default['openstack']['container']['conf'].tap do |conf|
   conf['api']['host'] = container_service_address
@@ -102,16 +100,14 @@ user node['openstack']['container']['user'] do
   gid node['openstack']['container']['group']
 end
 
-python_execute 'zun deps' do
-  virtualenv node['openstack']['container']['virtualenv']
-  command '-m pip install -I -r requirements.txt'
+execute 'zun deps' do
+  command "#{venv}/bin/pip install -I -r requirements.txt"
   cwd ::File.join(zun_dir)
   action :nothing
 end
 
-python_execute 'zun install' do
-  virtualenv node['openstack']['container']['virtualenv']
-  command 'setup.py install'
+execute 'zun install' do
+  command "#{venv}/bin/python setup.py install"
   cwd ::File.join(zun_dir)
   action :nothing
 end
@@ -119,8 +115,8 @@ end
 git zun_dir do
   revision node['openstack']['container']['release']
   repository node['openstack']['container']['repository']
-  notifies :run, 'python_execute[zun deps]', :immediately
-  notifies :run, 'python_execute[zun install]', :immediately
+  notifies :run, 'execute[zun deps]', :immediately
+  notifies :run, 'execute[zun install]', :immediately
 end
 
 %w(/etc/zun /var/lib/zun/tmp).each do |d|
