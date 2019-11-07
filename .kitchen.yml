@@ -1,4 +1,6 @@
 ---
+verifier:
+  name: inspec
 driver:
   name: openstack
   flavor_ref: 'm1.large'
