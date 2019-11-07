@@ -84,10 +84,24 @@ describe 'openstack-container::api' do
         end
       end
       it do
+        expect(chef_run.template('/etc/httpd/sites-available/zun-api.conf')).to \
+          notify('execute[Clear zun apache restart]').to(:run).immediately
+      end
+      it do
         expect(chef_run).to enable_service('zun-api').with(service_name: 'httpd')
       end
       it do
         expect(chef_run).to start_service('zun-api').with(service_name: 'httpd')
+      end
+      it do
+        expect(chef_run).to run_execute('zun apache restart')
+          .with(
+            command: 'touch /var/chef/cache/zun-apache-restarted',
+            creates: '/var/chef/cache/zun-apache-restarted'
+          )
+      end
+      it do
+        expect(chef_run.execute('zun apache restart')).to notify('service[zun-api]').to(:restart).immediately
       end
       it do
         expect(chef_run.service('zun-api')).to subscribe_to('template[/etc/zun/zun.conf]').on(:restart)

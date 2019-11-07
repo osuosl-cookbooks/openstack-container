@@ -24,6 +24,12 @@ include_recipe 'openstack-common'
 include_recipe 'build-essential'
 include_recipe 'git'
 
+# Clear lock file when notified
+execute 'Clear zun apache restart' do
+  command "rm -f #{Chef::Config[:file_cache_path]}/zun-apache-restarted"
+  action :nothing
+end
+
 venv = node['openstack']['container']['virtualenv']
 
 execute "virtualenv #{venv}" do
@@ -139,4 +145,5 @@ template node['openstack']['container']['conf_file'] do
   variables(
     service_config: zun_conf_options
   )
+  notifies :run, 'execute[Clear zun apache restart]', :immediately
 end

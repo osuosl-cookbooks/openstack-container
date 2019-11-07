@@ -104,11 +104,29 @@ web_app 'zun-api' do
   protocol node['openstack']['container']['ssl']['protocol']
   ciphers node['openstack']['container']['ssl']['ciphers']
   venv node['openstack']['container']['virtualenv']
-  notifies :reload, 'service[zun-api]'
+end
+
+# Hack until Apache cookbook has lwrp's for proper use of notify restart
+# apache2 after zun-api if completely configured. Whenever a zun
+# config is updated, have it notify the resource which clears the lock
+# so the service can be restarted.
+# TODO(ramereth): This should be removed once this cookbook is updated
+# to use the newer apache2 cookbook which uses proper resources.
+edit_resource(:template, "#{node['apache']['dir']}/sites-available/zun-api.conf") do
+  notifies :run, 'execute[Clear zun apache restart]', :immediately
 end
 
 service 'zun-api' do
   service_name node['openstack']['container']['zun_service']
   subscribes :restart, "template[#{node['openstack']['container']['conf_file']}]"
   action [:enable, :start]
+end
+
+# Only restart zun apache during the initial install. This causes
+# monitoring and service issues while the service is restarted so we
+# should minimize the amount of times we restart apache.
+execute 'zun apache restart' do
+  command "touch #{Chef::Config[:file_cache_path]}/zun-apache-restarted"
+  creates "#{Chef::Config[:file_cache_path]}/zun-apache-restarted"
+  notifies :restart, 'service[zun-api]', :immediately
 end

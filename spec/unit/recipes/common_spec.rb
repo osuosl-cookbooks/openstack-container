@@ -17,6 +17,12 @@ describe 'openstack-container::common' do
         end
       end
       it do
+        expect(chef_run).to nothing_execute('Clear zun apache restart')
+          .with(
+            command: 'rm -f /var/chef/cache/zun-apache-restarted'
+          )
+      end
+      it do
         expect(chef_run).to run_execute('virtualenv /opt/osc-zun').with(creates: '/opt/osc-zun')
       end
       it do
@@ -158,6 +164,9 @@ describe 'openstack-container::common' do
               },
             }
           )
+      end
+      it do
+        expect(chef_run.template('/etc/zun/zun.conf')).to notify('execute[Clear zun apache restart]').to(:run).immediately
       end
     end
   end
