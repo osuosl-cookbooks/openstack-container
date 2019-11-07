@@ -19,6 +19,4 @@ cookbook 'container_test', path: 'test/cookbooks/container_test'
            branch: 'master'
 end
 
-cookbook 'apache2', '< 6.0.0'
-
 metadata
