@@ -13,7 +13,7 @@ describe 'openstack-container::identity_registration' do
       end
       connection = {
         openstack_api_key: 'admin-pass',
-        openstack_auth_url: 'http://127.0.0.1:5000/v3/auth/tokens',
+        openstack_auth_url: 'http://127.0.0.1:5000/v3',
         openstack_domain_name: 'default',
         openstack_project_name: 'admin',
         openstack_username: 'admin',

@@ -2,8 +2,9 @@ source 'https://supermarket.chef.io'
 
 solver :ruby, :required
 
-cookbook 'openstack-common', github: 'osuosl-cookbooks/cookbook-openstack-common', branch: 'master-zun'
 cookbook 'container_test', path: 'test/cookbooks/container_test'
+cookbook 'openstackclient', github: 'openstack/cookbook-openstackclient'
+cookbook 'openstack-common', github: 'osuosl-cookbooks/cookbook-openstack-common', branch: 'master-zun'
 
 # Openstack deps
 %w(
