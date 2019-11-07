@@ -41,7 +41,7 @@ describe 'openstack-container::common' do
         expect(chef_run).to install_package(zunclient_pkgs)
       end
       it do
-        expect(chef_run).to run_execute('/usr/bin/pip install python-zunclient==3.3.0')
+        expect(chef_run).to run_execute('/usr/bin/pip install python-zunclient==2.1.0')
           .with(creates: '/usr/lib/python2.7/site-packages/zunclient')
       end
       it do

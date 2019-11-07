@@ -9,7 +9,7 @@ default['openstack']['container']['packages'] =
     pciutils
   )
 default['openstack']['container']['repository'] = 'https://git.openstack.org/openstack/zun.git'
-default['openstack']['container']['zunclient_version'] = '3.3.0'
+default['openstack']['container']['zunclient_version'] = '2.1.0'
 default['openstack']['container']['zunclient_packages'] =
   %w(
     python2-docker
