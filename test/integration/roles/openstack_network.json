@@ -17,6 +17,7 @@
       "recipe[openstack-network::l3_agent]",
       "recipe[openstack-network::dhcp_agent]",
       "recipe[openstack-network::metadata_agent]",
-      "recipe[openstack-network::metering_agent]"
+      "recipe[openstack-network::metering_agent]",
+      "recipe[container_test::network]"
     ]
 }
