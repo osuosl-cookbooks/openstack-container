@@ -101,5 +101,9 @@ cookbook_file '/usr/lib/docker/plugins/kuryr/kuryr.json'
 systemd_unit 'kuryr-libnetwork.service' do
   content node['openstack']['container']['network']['unit']
   action [:create, :enable, :start]
-  subscribes :reload_or_try_restart, "template[#{node['openstack']['container-network']['conf_file']}]"
+end
+
+service 'kuryr-libnetwork' do
+  action [:enable, :start]
+  subscribes :restart, "template[#{node['openstack']['container-network']['conf_file']}]"
 end

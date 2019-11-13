@@ -114,6 +114,15 @@ describe 'openstack-container::network' do
             }
           )
       end
+      it do
+        expect(chef_run).to enable_service('kuryr-libnetwork')
+      end
+      it do
+        expect(chef_run).to start_service('kuryr-libnetwork')
+      end
+      it do
+        expect(chef_run.service('kuryr-libnetwork')).to subscribe_to('template[/etc/kuryr/kuryr.conf]').on(:restart)
+      end
     end
   end
 end
