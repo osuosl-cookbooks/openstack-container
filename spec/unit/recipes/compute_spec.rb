@@ -83,14 +83,13 @@ describe 'openstack-container::compute' do
           )
       end
       it do
-        expect(chef_run).to enable_systemd_unit('zun-compute.service')
+        expect(chef_run).to enable_service('zun-compute')
       end
       it do
-        expect(chef_run).to start_systemd_unit('zun-compute.service')
+        expect(chef_run).to start_service('zun-compute')
       end
       it do
-        expect(chef_run.systemd_unit('zun-compute.service')).to \
-          subscribe_to('template[/etc/zun/zun.conf]').on(:reload_or_try_restart)
+        expect(chef_run.service('zun-compute')).to subscribe_to('template[/etc/zun/zun.conf]').on(:restart)
       end
     end
   end
