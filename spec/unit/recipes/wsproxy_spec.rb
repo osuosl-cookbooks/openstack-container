@@ -27,6 +27,18 @@ describe 'openstack-container::wsproxy' do
             }
           )
       end
+      it do
+        expect(chef_run).to enable_service('zun-wsproxy')
+      end
+      it do
+        expect(chef_run).to start_service('zun-wsproxy')
+      end
+      it do
+        expect(chef_run.service('zun-wsproxy')).to subscribe_to('template[/etc/zun/zun.conf]').on(:restart)
+      end
+      it do
+        expect(chef_run.service('zun-wsproxy')).to subscribe_to('systemd_unit[zun-wsproxy.service]').on(:restart)
+      end
     end
   end
 end

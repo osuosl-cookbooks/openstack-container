@@ -33,6 +33,11 @@ include_recipe 'openstack-container::common'
 
 systemd_unit 'zun-wsproxy.service' do
   content node['openstack']['container']['wsproxy']['unit']
-  action [:create, :enable, :start]
-  subscribes :reload_or_try_restart, "template[#{node['openstack']['container']['conf_file']}]"
+  action [:create]
+end
+
+service 'zun-wsproxy' do
+  action [:enable, :start]
+  subscribes :restart, "template[#{node['openstack']['container']['conf_file']}]"
+  subscribes :restart, 'systemd_unit[zun-wsproxy.service]'
 end
