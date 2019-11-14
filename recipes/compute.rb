@@ -74,4 +74,5 @@ end
 service 'zun-compute' do
   action [:enable, :start]
   subscribes :restart, "template[#{node['openstack']['container']['conf_file']}]"
+  subscribes :restart, 'systemd_unit[zun-compute.service]'
 end

@@ -106,4 +106,5 @@ end
 service 'kuryr-libnetwork' do
   action [:enable, :start]
   subscribes :restart, "template[#{node['openstack']['container-network']['conf_file']}]"
+  subscribes :restart, 'systemd_unit[kuryr-libnetwork.service]'
 end
