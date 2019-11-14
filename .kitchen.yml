@@ -52,6 +52,7 @@ suites:
       - recipe[openstack-container::identity_registration]
   - name: network
     run_list:
+      - recipe[container_test]
       - role[openstack_network]
       - recipe[openstack-container::identity_registration]
       - recipe[openstack-container::network]
