@@ -21,7 +21,9 @@ class ::Chef::Recipe
 end
 
 include_recipe 'openstack-common'
-include_recipe 'build-essential'
+
+build_essential 'openstack-container-network'
+
 include_recipe 'git'
 
 venv = node['openstack']['container-network']['virtualenv']

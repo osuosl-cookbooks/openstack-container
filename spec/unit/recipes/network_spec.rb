@@ -10,10 +10,13 @@ describe 'openstack-container::network' do
       it 'converges successfully' do
         expect { chef_run }.to_not raise_error
       end
-      %w(openstack-common build-essential git).each do |r|
+      %w(openstack-common git).each do |r|
         it do
           expect(chef_run).to include_recipe(r)
         end
+      end
+      it do
+        expect(chef_run).to install_build_essential('openstack-container-network')
       end
       it do
         expect(chef_run).to run_execute('virtualenv /opt/osc-kuryr')

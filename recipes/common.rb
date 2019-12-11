@@ -21,7 +21,9 @@ class ::Chef::Recipe
 end
 
 include_recipe 'openstack-common'
-include_recipe 'build-essential'
+
+build_essential 'openstack-container-common'
+
 include_recipe 'git'
 
 # Clear lock file when notified
