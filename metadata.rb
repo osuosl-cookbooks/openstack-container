@@ -7,7 +7,7 @@ issues_url       'https://github.com/osuosl-cookbooks/openstack-container/issues
 source_url       'https://github.com/osuosl-cookbooks/openstack-container'
 description      'Installs/Configures openstack-container'
 long_description 'Installs/Configures openstack-container'
-version          '0.1.0'
+version          '1.0.0'
 
 supports         'centos', '~> 7.0'
 
