@@ -10,3 +10,13 @@ long_description 'Installs/Configures openstack-container'
 version          '0.1.0'
 
 supports         'centos', '~> 7.0'
+
+depends 'apache2'
+depends 'build-essential'
+depends 'docker'
+depends 'git'
+depends 'openstackclient'
+depends 'openstack-common'
+depends 'openstack-dashboard'
+depends 'openstack-identity'
+depends 'sudo'

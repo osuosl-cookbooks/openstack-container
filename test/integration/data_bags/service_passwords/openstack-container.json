@@ -1,0 +1,10 @@
+{
+  "id": "openstack-container",
+  "openstack-container": {
+    "encrypted_data": "LWkqKS4oNntEt/mimSGlbVQkCv8gU7yZXA6cDCBVSqy7bpuJIGuh5E2FpMFt\nYb/Y\n",
+    "hmac": "hZrCsve1E0xKX9GoWn25uhqAkYmTPIeYU+sU3m3IkzM=\n",
+    "iv": "oKhz0/W+TnhBTqjGtY4Rvw==\n",
+    "version": 2,
+    "cipher": "aes-256-cbc"
+  }
+}

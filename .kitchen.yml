@@ -1,5 +1,62 @@
 ---
+verifier:
+  name: inspec
+driver:
+  name: openstack
+  flavor_ref: 'm1.large'
+provisioner:
+  name: chef_zero
+  roles_path: test/integration/roles
+  data_bags_path: test/integration/data_bags
+  encrypted_data_bag_secret_key_path: test/integration/encrypted_data_bag_secret
+  attributes:
+    yum:
+      epel:
+        baseurl: http://epel.osuosl.org/7/$basearch
+        gpgkey: http://epel.osuosl.org/RPM-GPG-KEY-EPEL-7
+
 suites:
-  - name: default
+  - name: api
     run_list:
-      - recipe[openstack-container::default]
+      - role[openstack_ops_identity]
+      - recipe[openstack-container::api]
+      - recipe[openstack-container::identity_registration]
+  - name: common
+    run_list:
+      - role[openstack]
+      - recipe[openstack-container::common]
+  - name: compute
+    run_list:
+      - recipe[container_test]
+      - role[openstack_image]
+      - role[openstack_network]
+      - recipe[openstack-container::api]
+      - recipe[openstack-container::identity_registration]
+      - recipe[openstack-container::compute]
+      - recipe[openstack-container::network]
+  - name: dashboard
+    run_list:
+      - recipe[container_test]
+      - role[openstack_image]
+      - role[openstack_network]
+      - recipe[openstack-container::api]
+      - recipe[openstack-container::identity_registration]
+      - recipe[openstack-container::compute]
+      - recipe[openstack-container::network]
+      - recipe[openstack-dashboard::horizon]
+      - recipe[openstack-container::wsproxy]
+      - recipe[openstack-container::dashboard]
+  - name: identity_registration
+    run_list:
+      - role[openstack_ops_identity]
+      - recipe[openstack-container::identity_registration]
+  - name: network
+    run_list:
+      - recipe[container_test]
+      - role[openstack_network]
+      - recipe[openstack-container::identity_registration]
+      - recipe[openstack-container::network]
+  - name: wsproxy
+    run_list:
+      - role[openstack]
+      - recipe[openstack-container::wsproxy]

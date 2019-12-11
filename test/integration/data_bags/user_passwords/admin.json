@@ -1,0 +1,10 @@
+{
+  "id": "admin",
+  "admin": {
+    "encrypted_data": "sWEbP1bz3t6xT0oAD+u7Fw+YCYXbM1OohuPppaP+n+Q=\n",
+    "hmac": "HrLAIBW7RNq/cz4lMqPoood+YHrZgD8bnHfZZok/gUE=\n",
+    "iv": "8+d/0sXTB6V89JYwB3tCSg==\n",
+    "version": 2,
+    "cipher": "aes-256-cbc"
+  }
+}

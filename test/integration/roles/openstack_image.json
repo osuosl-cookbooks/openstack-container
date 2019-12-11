@@ -1,0 +1,14 @@
+{
+    "chef_type": "role",
+    "default_attributes": {},
+    "description": "OpenStack Image Role",
+    "env_run_lists": {},
+    "json_class": "Chef::Role",
+    "name": "openstack_image",
+    "override_attributes": {},
+    "run_list": [
+      "role[openstack_ops_identity]",
+      "recipe[openstack-image::api]",
+      "recipe[openstack-image::identity_registration]"
+    ]
+}
