@@ -2,7 +2,7 @@
 # Cookbook:: openstack-container
 # Recipe:: common
 #
-# Copyright:: 2019, Oregon State University
+# Copyright:: 2019-2020, Oregon State University
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -25,12 +25,6 @@ include_recipe 'openstack-common'
 build_essential 'openstack-container-common'
 
 include_recipe 'git'
-
-# Clear lock file when notified
-execute 'Clear zun apache restart' do
-  command "rm -f #{Chef::Config[:file_cache_path]}/zun-apache-restarted"
-  action :nothing
-end
 
 venv = node['openstack']['container']['virtualenv']
 
@@ -109,7 +103,7 @@ user node['openstack']['container']['user'] do
 end
 
 execute 'zun deps' do
-  command "#{venv}/bin/pip install -I -r requirements.txt"
+  command "#{venv}/bin/pip install -I -r requirements.txt python_memcached"
   cwd ::File.join(zun_dir)
   action :nothing
 end
@@ -135,6 +129,16 @@ end
   end
 end
 
+# service['apache2'] is defined in the apache2_default_install resource
+# but other resources are currently unable to reference it.  To work
+# around this issue, define the following helper in your cookbook:
+service 'apache2' do
+  extend Apache2::Cookbook::Helpers
+  service_name lazy { apache_platform_service_name }
+  supports restart: true, status: true, reload: true
+  action :nothing
+end
+
 # merge all config options and secrets to be used in the zun.conf
 zun_conf_options = merge_config_options 'container'
 
@@ -147,5 +151,4 @@ template node['openstack']['container']['conf_file'] do
   variables(
     service_config: zun_conf_options
   )
-  notifies :run, 'execute[Clear zun apache restart]', :immediately
 end

@@ -19,7 +19,7 @@ end
 
 describe command 'zun --version' do
   its('exit_status') { should eq 0 }
-  its('stderr') { should match '2.1.0' }
+  its('stderr') { should match '3.3.0' }
 end
 
 %w(/etc/zun /var/lib/zun/tmp).each do |d|

@@ -6,6 +6,10 @@ driver:
   flavor_ref: 'm1.large'
 provisioner:
   name: chef_zero
+  product_name: chef
+  product_version: 15
+  client_rb:
+    chef_license: accept
   roles_path: test/integration/roles
   data_bags_path: test/integration/data_bags
   encrypted_data_bag_secret_key_path: test/integration/encrypted_data_bag_secret
@@ -37,14 +41,16 @@ suites:
   - name: dashboard
     run_list:
       - recipe[container_test]
+      - recipe[memcached]
       - role[openstack_image]
       - role[openstack_network]
+      - recipe[openstack-container::wsproxy]
       - recipe[openstack-container::api]
+      - recipe[container_test::etcd]
       - recipe[openstack-container::identity_registration]
       - recipe[openstack-container::compute]
       - recipe[openstack-container::network]
       - recipe[openstack-dashboard::horizon]
-      - recipe[openstack-container::wsproxy]
       - recipe[openstack-container::dashboard]
   - name: identity_registration
     run_list:

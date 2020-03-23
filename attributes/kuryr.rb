@@ -1,8 +1,8 @@
 default['openstack']['container-network']['user'] = 'kuryr'
 default['openstack']['container-network']['group'] = 'kuryr'
 default['openstack']['container-network']['virtualenv'] = '/opt/osc-kuryr'
-default['openstack']['container-network']['release'] = 'stable/rocky'
-default['openstack']['container-network']['repository'] = 'https://git.openstack.org/openstack/kuryr-libnetwork.git'
+default['openstack']['container-network']['release'] = 'stable/stein'
+default['openstack']['container-network']['repository'] = 'https://opendev.org/openstack/kuryr-libnetwork.git'
 default['openstack']['bind_service']['all']['container-network']['port'] = 9517
 default['openstack']['bind_service']['all']['container-network']['host'] = '127.0.0.1'
 default['openstack']['bind_service']['all']['container-wsproxy']['port'] = 6784

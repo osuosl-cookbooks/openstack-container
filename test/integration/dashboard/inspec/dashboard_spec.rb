@@ -6,7 +6,7 @@
 # found at http://inspec.io/docs/reference/resources/
 describe pip 'zun-ui' do
   it { should be_installed }
-  its('version') { should < '3.0.0' }
+  its('version') { should <= '3.0.1' }
 end
 
 %w(

@@ -1,15 +1,15 @@
 default['openstack']['container']['user'] = 'zun'
 default['openstack']['container']['group'] = 'zun'
 default['openstack']['container']['virtualenv'] = '/opt/osc-zun'
-default['openstack']['container']['release'] = 'stable/rocky'
+default['openstack']['container']['release'] = 'stable/stein'
 default['openstack']['container']['packages'] =
   %w(
     libffi-devel
     openssl-devel
     pciutils
   )
-default['openstack']['container']['repository'] = 'https://git.openstack.org/openstack/zun.git'
-default['openstack']['container']['zunclient_version'] = '2.1.0'
+default['openstack']['container']['repository'] = 'https://opendev.org/openstack/zun.git'
+default['openstack']['container']['zunclient_version'] = '3.3.0'
 default['openstack']['container']['zunclient_packages'] =
   %w(
     python2-docker
@@ -25,15 +25,19 @@ default['openstack']['container']['zunclient_packages'] =
     python-websocket-client
   )
 
-default['openstack']['container-ui']['release'] = 'stable/rocky'
+default['openstack']['container-ui']['release'] = 'stable/stein'
 default['openstack']['container-ui']['packages'] = []
-default['openstack']['container-ui']['repository'] = 'https://git.openstack.org/openstack/zun-ui.git'
+default['openstack']['container-ui']['repository'] = 'https://opendev.org/openstack/zun-ui.git'
 default['openstack']['container-ui']['files'] =
   %w(
+    _0330_cloud_shell.py
     _1330_project_container_panelgroup.py
     _1331_project_container_containers_panel.py
+    _1332_project_container_capsules_panel.py
     _2330_admin_container_panelgroup.py
     _2331_admin_container_images_panel.py
+    _2332_admin_container_hosts_panel.py
+    _2333_admin_container_containers_panel.py
   )
 
 default['openstack']['bind_service']['all']['container']['port'] = 9517

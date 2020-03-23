@@ -1,6 +1,7 @@
 default['openstack']['container']['conf_secrets'] = {}
 default['openstack']['container']['conf'].tap do |conf|
   conf['DEFAULT']['image_driver_list'] = 'docker'
+  conf['DEFAULT']['state_path'] = '/var/lib/zun'
   # [keystone_authtoken] section
   conf['keystone_authtoken']['auth_type'] = 'v3password'
   conf['keystone_authtoken']['project_domain_name'] = 'Default'

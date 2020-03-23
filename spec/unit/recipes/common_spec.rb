@@ -20,12 +20,6 @@ describe 'openstack-container::common' do
         expect(chef_run).to install_build_essential('openstack-container-common')
       end
       it do
-        expect(chef_run).to nothing_execute('Clear zun apache restart')
-          .with(
-            command: 'rm -f /var/chef/cache/zun-apache-restarted'
-          )
-      end
-      it do
         expect(chef_run).to run_execute('virtualenv /opt/osc-zun').with(creates: '/opt/osc-zun')
       end
       it do
@@ -50,8 +44,10 @@ describe 'openstack-container::common' do
         expect(chef_run).to install_package(zunclient_pkgs)
       end
       it do
-        expect(chef_run).to run_execute('/usr/bin/pip install python-zunclient==2.1.0')
-          .with(creates: '/usr/lib/python2.7/site-packages/zunclient')
+        expect(chef_run).to run_execute('install python-zunclient').with(
+          command: '/usr/bin/pip install python-zunclient==3.3.0',
+          creates: '/usr/lib/python2.7/site-packages/zunclient'
+        )
       end
       it do
         expect(chef_run).to install_package(%w(libffi-devel openssl-devel pciutils))
@@ -75,7 +71,7 @@ describe 'openstack-container::common' do
       it do
         expect(chef_run).to nothing_execute('zun deps')
           .with(
-            command: '/opt/osc-zun/bin/pip install -I -r requirements.txt',
+            command: '/opt/osc-zun/bin/pip install -I -r requirements.txt python_memcached',
             cwd: '/var/chef/cache/zun'
           )
       end
@@ -89,8 +85,8 @@ describe 'openstack-container::common' do
       it do
         expect(chef_run).to sync_git('/var/chef/cache/zun')
           .with(
-            revision: 'stable/rocky',
-            repository: 'https://git.openstack.org/openstack/zun.git'
+            revision: 'stable/stein',
+            repository: 'https://opendev.org/openstack/zun.git'
           )
       end
       it do
@@ -121,6 +117,7 @@ describe 'openstack-container::common' do
               service_config: {
                 'DEFAULT' => {
                   'image_driver_list' => 'docker',
+                  'state_path' => '/var/lib/zun',
                   'transport_url' => 'rabbit://openstack:openstack@controller.example.org:5672',
                 },
                 'keystone_authtoken' => {
@@ -167,9 +164,6 @@ describe 'openstack-container::common' do
               },
             }
           )
-      end
-      it do
-        expect(chef_run.template('/etc/zun/zun.conf')).to notify('execute[Clear zun apache restart]').to(:run).immediately
       end
     end
   end

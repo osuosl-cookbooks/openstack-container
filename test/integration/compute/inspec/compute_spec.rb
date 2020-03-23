@@ -31,7 +31,7 @@ describe docker.info do
 end
 
 describe ini '/etc/systemd/system/docker-zun.service' do
-  its('Service.ExecStart') { should cmp '/usr/bin/dockerd  --cluster-store=etcd://127.0.0.1:2379 --group=zun --host tcp://127.0.0.1:2375 --host unix:///var/run/docker.sock --pidfile=/var/run/docker-zun.pid' }
+  its('Service.ExecStart') { should cmp '/usr/bin/dockerd  --cluster-store=etcd://127.0.0.1:2379 --group=zun --host tcp://127.0.0.1:2375 --host unix:///var/run/docker.sock --pidfile=/var/run/docker-zun.pid --containerd=/run/containerd/containerd.sock' }
 end
 
 describe port(2375) do
@@ -67,7 +67,7 @@ describe command('bash -c "source /root/openrc && openstack appcontainer host li
   its('stdout') { should match /compute/ }
 end
 
-describe command('bash -c "source /root/openrc && openstack appcontainer run --name test -f shell cirros uname -a && sleep 5"') do
+describe command('bash -c "source /root/openrc && openstack appcontainer run --name test -f shell cirros uname -a && sleep 10"') do
   its('exit_status') { should eq 0 }
   its('stdout') { should match /image="cirros"/ }
   its('stdout') { should match /status="Creating"/ }

@@ -6,6 +6,9 @@
       },
       "openstack": {
         "forbid_remote_root": false,
+        "memcached_servers": [
+          "127.0.0.1:11211"
+        ],
         "network": {
           "plugins": {
             "ml2": {
@@ -91,7 +94,6 @@
     "name": "openstack",
     "override_attributes": {},
     "run_list": [
-      "recipe[build-essential]",
       "recipe[openstack-common]",
       "recipe[openstack-common::client]",
       "recipe[openstack-identity::openrc]",

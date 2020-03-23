@@ -54,8 +54,8 @@ describe 'openstack-container::network' do
       it do
         expect(chef_run).to sync_git('/var/chef/cache/kuryr-libnetwork')
           .with(
-            revision: 'stable/rocky',
-            repository: 'https://git.openstack.org/openstack/kuryr-libnetwork.git'
+            revision: 'stable/stein',
+            repository: 'https://opendev.org/openstack/kuryr-libnetwork.git'
           )
       end
       it do
@@ -86,6 +86,8 @@ describe 'openstack-container::network' do
               service_config: {
                 'DEFAULT' => {
                   'bindir' => '/opt/osc-kuryr/libexec/kuryr',
+                  'capability_scope' => 'global',
+                  'process_external_connectivity' => 'False',
                 },
                 'neutron' => {
                   'auth_type' => 'password',

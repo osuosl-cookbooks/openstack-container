@@ -27,8 +27,8 @@ describe 'openstack-container::dashboard' do
       it do
         expect(chef_run).to sync_git('/var/chef/cache/zun-ui')
           .with(
-            revision: 'stable/rocky',
-            repository: 'https://git.openstack.org/openstack/zun-ui.git'
+            revision: 'stable/stein',
+            repository: 'https://opendev.org/openstack/zun-ui.git'
           )
       end
       it do
@@ -37,10 +37,14 @@ describe 'openstack-container::dashboard' do
       end
       dash_dir = '/usr/share/openstack-dashboard/openstack_dashboard/local/enabled'
       %w(
+        _0330_cloud_shell.py
         _1330_project_container_panelgroup.py
         _1331_project_container_containers_panel.py
+        _1332_project_container_capsules_panel.py
         _2330_admin_container_panelgroup.py
         _2331_admin_container_images_panel.py
+        _2332_admin_container_hosts_panel.py
+        _2333_admin_container_containers_panel.py
       ).each do |f|
         it do
           expect(chef_run).to create_remote_file("#{dash_dir}/#{f}")

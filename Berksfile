@@ -3,8 +3,9 @@ source 'https://supermarket.chef.io'
 solver :ruby, :required
 
 cookbook 'container_test', path: 'test/cookbooks/container_test'
-cookbook 'openstackclient', github: 'openstack/cookbook-openstackclient'
-cookbook 'openstack-common', github: 'osuosl-cookbooks/cookbook-openstack-common', branch: 'master-zun'
+cookbook 'openstackclient', github: 'osuosl-cookbooks/cookbook-openstackclient', branch: 'stein-updates'
+cookbook 'openstack-common', github: 'osuosl-cookbooks/cookbook-openstack-common', branch: 'stein-zun'
+cookbook 'memcached'
 
 # Openstack deps
 %w(
@@ -16,8 +17,8 @@ cookbook 'openstack-common', github: 'osuosl-cookbooks/cookbook-openstack-common
   ops-messaging
 ).each do |cb|
   cookbook "openstack-#{cb}",
-           github: "openstack/cookbook-openstack-#{cb}",
-           branch: 'master'
+           github: "osuosl-cookbooks/cookbook-openstack-#{cb}",
+           branch: 'stein-updates'
 end
 
 metadata
