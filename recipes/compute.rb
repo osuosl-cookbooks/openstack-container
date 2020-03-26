@@ -25,8 +25,8 @@ include_recipe 'sudo'
 
 zun_user = node['openstack']['container']['user']
 zun_group = node['openstack']['container']['group']
-bind_service = node['openstack']['bind_service']['all']['container']
-bind_service_address = bind_address bind_service
+etcd_host = node['openstack']['container']['conf']['etcd']['etcd_host']
+etcd_port = node['openstack']['container']['conf']['etcd']['etcd_port']
 bind_docker = node['openstack']['bind_service']['all']['container-docker']
 bind_docker_address = bind_address bind_docker
 
@@ -61,7 +61,7 @@ docker_service 'zun' do
     "tcp://#{bind_docker_address}:#{bind_docker['port']}",
     'unix:///var/run/docker.sock',
   ]
-  cluster_store "etcd://#{bind_service_address}:2379"
+  cluster_store "etcd://#{etcd_host}:#{etcd_port}"
   group zun_group
   action [:create, :start]
 end
