@@ -102,6 +102,7 @@ shared_context 'container_stubs' do
     allow_any_instance_of(Chef::Recipe).to receive(:rabbit_transport_url)
       .with('container')
       .and_return('rabbit://openstack:openstack@controller.example.org:5672')
+    stub_command("/opt/osc-zun/bin/pip show websockify | grep -q 'Version: 0.8.0'").and_return(false)
   end
 end
 

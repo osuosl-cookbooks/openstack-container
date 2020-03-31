@@ -67,3 +67,7 @@ describe ini '/etc/zun/zun.conf' do
   its('etcd.etcd_port') { should eq '2379' }
   its('database.connection') { should eq 'mysql+pymysql://zun:zun@127.0.0.1:3306/zun?charset=utf8' }
 end
+
+describe command '/opt/osc-zun/bin/pip show websockify' do
+  its('stdout') { should match /Version: 0.8.0/ }
+end

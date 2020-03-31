@@ -121,6 +121,14 @@ git zun_dir do
   notifies :run, 'execute[zun install]', :immediately
 end
 
+# TODO: Remove after train as this patch [1] should be available
+# [1] https://review.opendev.org/#/c/688290/
+execute 'install websockify' do
+  command "#{venv}/bin/pip install 'websockify<0.9.0'"
+  # creates "#{venv}/lib/python2.7/site-packages/websockify-0.8.0.dist-info"
+  not_if "#{venv}/bin/pip show websockify | grep -q 'Version: 0.8.0'"
+end
+
 %w(/etc/zun /var/lib/zun/tmp).each do |d|
   directory d do
     user node['openstack']['container']['user']

@@ -95,6 +95,22 @@ describe 'openstack-container::common' do
       it do
         expect(chef_run.git('/var/chef/cache/zun')).to notify('execute[zun install]').to(:run).immediately
       end
+      it do
+        expect(chef_run).to run_execute('install websockify').with(
+          command: "/opt/osc-zun/bin/pip install \'websockify<0.9.0\'"
+        )
+      end
+      context 'websockify already installed' do
+        cached(:chef_run) do
+          ChefSpec::SoloRunner.new(p).converge(described_recipe)
+        end
+        before do
+          stub_command("/opt/osc-zun/bin/pip show websockify | grep -q 'Version: 0.8.0'").and_return(true)
+        end
+        it do
+          expect(chef_run).to_not run_execute('install websockify')
+        end
+      end
       %w(/etc/zun /var/lib/zun/tmp).each do |d|
         it do
           expect(chef_run).to create_directory(d)

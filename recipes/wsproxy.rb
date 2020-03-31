@@ -40,4 +40,5 @@ service 'zun-wsproxy' do
   action [:enable, :start]
   subscribes :restart, "template[#{node['openstack']['container']['conf_file']}]"
   subscribes :restart, 'systemd_unit[zun-wsproxy.service]'
+  subscribes :restart, 'execute[install websockify]'
 end

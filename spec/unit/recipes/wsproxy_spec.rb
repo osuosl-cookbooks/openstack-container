@@ -39,6 +39,9 @@ describe 'openstack-container::wsproxy' do
       it do
         expect(chef_run.service('zun-wsproxy')).to subscribe_to('systemd_unit[zun-wsproxy.service]').on(:restart)
       end
+      it do
+        expect(chef_run.service('zun-wsproxy')).to subscribe_to('execute[install websockify]').on(:restart)
+      end
     end
   end
 end
